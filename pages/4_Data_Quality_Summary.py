@@ -15,7 +15,6 @@ else:
     liste_df = list(datasets.values())
     liste_names = list(datasets.keys())
 
-    # --- 1. KPI SECTION ---
     st.header("1. Data Health KPIs")
     
     total_records = sum(len(df) for df in liste_df)
@@ -25,8 +24,8 @@ else:
     caract_df = datasets.get('Characteristics', liste_df[0])
     users_df = datasets.get('Users', liste_df[3])
     loc_df = datasets.get('Locations', liste_df[2])
-    veh_df = datasets.get('Vehicles', liste_df[1])
-    
+    veh_df = st.session_state['datasets']['Vehicles']
+
     geo_anomalies = caract_df[(caract_df['lat'] == 0) | (caract_df['lat'].isna()) | (caract_df['lat'] == 0.0)].shape[0]
     
     m1, m2, m3, m4 = st.columns(4)
@@ -37,7 +36,6 @@ else:
 
     st.markdown("---")
 
-    # --- 2. REPORT SECTION ---
     st.header("2. Data Quality Report (Main Discovered Issues)")
     st.markdown(
         """
@@ -77,7 +75,6 @@ else:
 
     st.markdown("---")
 
-    # --- NEW: 3. VISUAL EVIDENCE SECTION ---
     st.header("3. Visual Evidence of Data Anomalies")
     st.write("Deep dive visualizations into the exact distributions causing the flags above.")
 
@@ -85,7 +82,6 @@ else:
 
     with vis_col1:
         st.subheader("The '-1' Hidden Gap in Vehicles Dataset")
-        # Calcul de la proportion de -1 pour quelques colonnes clés de Vehicles
         cols_to_check = ['senc', 'obs', 'obsm', 'choc', 'manv']
         missing_minus_one = []
         
@@ -110,7 +106,6 @@ else:
     with vis_col2:
         st.subheader("Outlier Detection: Speed Limit (`vma`) Distribution")
         if 'vma' in loc_df.columns:
-            # On simule un rapide value_counts pour éviter de saturer la mémoire si le dataset est immense
             vma_counts = loc_df['vma'].value_counts().reset_index()
             vma_counts.columns = ['Speed Limit (vma)', 'Count']
             
@@ -119,7 +114,6 @@ else:
                 title="Frequency of Speed Limit Values (Spotting the 900 km/h Outlier)",
                 log_y=True, size='Count', size_max=20
             )
-            # Ajout d'une annotation pour pointer du doigt l'erreur
             fig_vma.add_annotation(
                 x=900, y=1, text="Typo: 900 km/h!", showarrow=True, arrowhead=1, ax=-50, ay=-30, font=dict(color="red")
             )
@@ -128,12 +122,10 @@ else:
         else:
             st.info("Locations dataframe or 'vma' column not found.")
 
-    # Deuxième ligne de graphes pour la géographie et la complétude
     vis_col3, vis_col4 = st.columns(2)
 
     with vis_col3:
         st.subheader("Critical vs. Structural Missingness")
-        # Comparaison de NaNs réels et de sens métier
         sparsity_data = []
         if 'an_nais' in users_df.columns:
             sparsity_data.append({'Metric': 'Birth Year (an_nais)<br><b>[CRITICAL GAP]</b>', 'Missing %': users_df['an_nais'].isnull().mean() * 100, 'Type': 'True Operational Gap'})
@@ -155,7 +147,6 @@ else:
     with vis_col4:
         st.subheader("Geospatial Telemetry Loss")
         if 'lat' in caract_df.columns and 'long' in caract_df.columns:
-            # Dataframe résumé pour le camembert
             valid_geo = caract_df[(caract_df['lat'] != 0) & (caract_df['lat'].notna()) & (caract_df['lat'] != 0.0)].shape[0]
             pie_df = pd.DataFrame({
                 'Status': ['Valid Coordinates', 'Lost Telemetry (0.0 or NaN)'],
@@ -171,7 +162,6 @@ else:
 
     st.markdown("---")
 
-    # --- 4. DOWNSTREAM IMPACT SECTION ---
     st.header("4. Downstream Analytics & Architectural Impact")
     st.write("How these structural and quality issues directly threaten Business Intelligence and Machine Learning goals if left uncleaned:")
 

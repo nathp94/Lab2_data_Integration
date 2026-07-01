@@ -25,6 +25,19 @@ SEMANTIC_MEANINGS = {
         "lat": "Latitude of the accident location.",
         "long": "Longitude of the accident location."
     },
+    "Vehicles": {
+        "Num_Acc": "Accident identifier.",
+        "id_vehicule": "Unique identifier of the vehicle (used to link users).",
+        "Num_Veh": "Alphanumeric identifier of the vehicle within the accident.",
+        "senc": "Direction of traffic (1: Increasing milestone numbers, 2: Decreasing milestone numbers).",
+        "catv": "Category of vehicle (01: Bicycle, 07: Single passenger car, 10: Light commercial vehicle, 33: Motorcycle, 50: Motorized personal mobility device, etc.).",
+        "obs": "Fixed obstacle hit (2: Tree, 4: Safety barrier/guardrail, 8: Post/pole, 13: Ditch, etc.).",
+        "obsm": "Moving obstacle hit (1: Pedestrian, 2: Vehicle, 5-6: Animal).",
+        "choc": "Initial point of impact (1: Front, 4: Rear, 7-8: Sides, 9: Multiple impacts).",
+        "manv": "Main maneuver prior to the accident (1: No change in direction, 15: Turning, etc.).",
+        "motor": "Type of vehicle engine/motorization (1: Combustion engine/hydrocarbons, 3: Electric, 5: Human power, etc.).",
+        "occutc": "Number of occupants in the case of public transport."
+    },
     "Locations": {
         "Num_Acc": "Accident identifier (foreign key to Characteristics).",
         "catr": "Category of road (1: Highway/Motorway, 2: National road, 3: Departmental road, 4: Communal road, etc.).",
@@ -44,19 +57,6 @@ SEMANTIC_MEANINGS = {
         "infra": "Layout - Infrastructure (1: Tunnel, 2: Bridge, 6: Pedestrian zone, etc.).",
         "situ": "Location of the accident (1: On the roadway, 4: On the sidewalk, 5: On a cycle path).",
         "vma": "Maximum authorized speed limit at the location at the time of the accident."
-    },
-    "Vehicles": {
-        "Num_Acc": "Accident identifier.",
-        "id_vehicule": "Unique identifier of the vehicle (used to link users).",
-        "Num_Veh": "Alphanumeric identifier of the vehicle within the accident.",
-        "senc": "Direction of traffic (1: Increasing milestone numbers, 2: Decreasing milestone numbers).",
-        "catv": "Category of vehicle (01: Bicycle, 07: Single passenger car, 10: Light commercial vehicle, 33: Motorcycle, 50: Motorized personal mobility device, etc.).",
-        "obs": "Fixed obstacle hit (2: Tree, 4: Safety barrier/guardrail, 8: Post/pole, 13: Ditch, etc.).",
-        "obsm": "Moving obstacle hit (1: Pedestrian, 2: Vehicle, 5-6: Animal).",
-        "choc": "Initial point of impact (1: Front, 4: Rear, 7-8: Sides, 9: Multiple impacts).",
-        "manv": "Main maneuver prior to the accident (1: No change in direction, 15: Turning, etc.).",
-        "motor": "Type of vehicle engine/motorization (1: Combustion engine/hydrocarbons, 3: Electric, 5: Human power, etc.).",
-        "occutc": "Number of occupants in the case of public transport."
     },
     "Users": {
         "Num_Acc": "Accident identifier.",
@@ -81,15 +81,13 @@ SEMANTIC_MEANINGS = {
 
 @st.cache_data
 def load_data():
-    # Liens directs de téléchargement (fichiers RAW) depuis data.gouv.fr
     urls = {
         "caract": "https://www.data.gouv.fr/fr/datasets/r/83f0fb0e-e0ef-47fe-93dd-9aaee851674a",
-        "vehicules": "https://www.data.gouv.fr/fr/datasets/r/228b3cda-fdfb-4677-bd54-ab2107028d2d",
-        "lieux": "https://www.data.gouv.fr/fr/datasets/r/fd30513c-6b11-4a56-b6dc-5ac87728794b",
+        "vehicules": "https://www.data.gouv.fr/fr/datasets/r/fd30513c-6b11-4a56-b6dc-5ac87728794b",
+        "lieux": "https://www.data.gouv.fr/fr/datasets/r/228b3cda-fdfb-4677-bd54-ab2107028d2d",
         "usagers": "https://www.data.gouv.fr/fr/datasets/r/f57b1f58-386d-4048-8f78-2ebe435df868"
     }
 
-    # Lecture des fichiers directement depuis le web
     caract = pd.read_csv(urls["caract"], sep=";", decimal=",", low_memory=False)
     vehicules = pd.read_csv(urls["vehicules"], sep=";", decimal=",", low_memory=False)
     lieux = pd.read_csv(urls["lieux"], sep=";", decimal=",", low_memory=False)
