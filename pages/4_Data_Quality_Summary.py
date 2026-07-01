@@ -162,7 +162,7 @@ else:
 
     st.markdown("---")
 
-    st.header("4. Downstream Analytics & Architectural Impact")
+    st.header("4. Downstream Analytics & Architectural Impact ")
     st.write("How these structural and quality issues directly threaten Business Intelligence and Machine Learning goals if left uncleaned:")
 
     st.markdown(
