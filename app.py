@@ -81,13 +81,21 @@ SEMANTIC_MEANINGS = {
 
 @st.cache_data
 def load_data():
-    caract = pd.read_csv("2024_data/caract-2024.csv", sep=";", decimal=",", low_memory=False)
-    vehicules = pd.read_csv("2024_data/vehicules-2024.csv", sep=";", decimal=",", low_memory=False)
-    lieux = pd.read_csv("2024_data/lieux-2024.csv", sep=";", decimal=",", low_memory=False)
-    usagers = pd.read_csv("2024_data/usagers-2024.csv", sep=";", decimal=",", low_memory=False)
-    
-    return {"Characteristics": caract, "Vehicles": vehicules, "Locations": lieux, "Users": usagers}
+    # Liens directs de téléchargement (fichiers RAW) depuis data.gouv.fr
+    urls = {
+        "caract": "https://www.data.gouv.fr/fr/datasets/r/83f0fb0e-e0ef-47fe-93dd-9aaee851674a",
+        "vehicules": "https://www.data.gouv.fr/fr/datasets/r/228b3cda-fdfb-4677-bd54-ab2107028d2d",
+        "lieux": "https://www.data.gouv.fr/fr/datasets/r/fd30513c-6b11-4a56-b6dc-5ac87728794b",
+        "usagers": "https://www.data.gouv.fr/fr/datasets/r/f57b1f58-386d-4048-8f78-2ebe435df868"
+    }
 
+    # Lecture des fichiers directement depuis le web
+    caract = pd.read_csv(urls["caract"], sep=";", decimal=",", low_memory=False)
+    vehicules = pd.read_csv(urls["vehicules"], sep=";", decimal=",", low_memory=False)
+    lieux = pd.read_csv(urls["lieux"], sep=";", decimal=",", low_memory=False)
+    usagers = pd.read_csv(urls["usagers"], sep=";", decimal=",", low_memory=False)
+
+    return {"Characteristics": caract, "Vehicles": vehicules, "Locations": lieux, "Users": usagers}
 try:
     datasets = load_data()
     st.success("The 4 datasets have been successfully loaded!")
